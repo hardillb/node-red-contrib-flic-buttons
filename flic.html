@@ -1,0 +1,47 @@
+<script type="text/x-red" data-template-name="flic">
+	<div class="form-row">
+		<label for="node-input-topic"><i class="fa fa-tasks"</i> Topic</label>
+		<input type="text" id="node-input-topic" placeholder="Topic"/>
+	</div>
+	<br />
+	<div class="form-row">
+		<label for="node-input-host"><i class="fa fa-tag"></i> Host</label>
+		<input type="text" id="node-input-host" placeholder="Host">
+	</div>
+	<br />
+	<div class="form-row">
+		<label for="node-input-port"><i class="fa fa-tag"></i> Port</label>
+		<input type="text" id="node-input-port" placeholder="Port">
+	</div>
+	<br />
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="flic">
+<p>A node to inject events from Shortcut Labs Flic buttons</p>
+</script>
+
+<script type="text/javascript">
+RED.nodes.registerType('flic',{
+	category: 'input',
+	defaults: {
+		'name': {value: ""},
+		'host': {value:"127.0.0.1", required: true},
+		'port': {value: 5000, required: true},
+		'topic': {value:"flic", required:true}
+	},
+	color: '',
+	inputs: 0,
+	outputs: 1,
+	icon: '',
+	label: function(){
+		return this.name||"flic";
+	},
+	labelStyel: function(){
+		return this.name?"node_label_italic":"";
+	}
+});
+</script>
