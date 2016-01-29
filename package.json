@@ -1,16 +1,17 @@
 {
   "name": "node-red-contrib-flic-buttons",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Node-RED node to inject events from flic buttons",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "flic",
+    "flic.io",
+    "ble",
     "node-red"
   ],
   "node-red": {
-    "nodes: {
+    "nodes": {
       "flic": "flic.js"
     }
   },
@@ -19,5 +20,8 @@
      "name" : "Benjamin Hardill",
      "url"  : "http://www.hardill.me.uk/wordpress/"
   },
-  "license": "APACHE-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "node-flic-buttons": "~0.0.2"
+  }
 }
