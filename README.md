@@ -1,4 +1,4 @@
-##node-red-contrib-flic-buttons##
+##node-red-contrib-flic-buttons
 
 A Node-RED node to interact with the [flic.io][1] BLE buttons.
 
