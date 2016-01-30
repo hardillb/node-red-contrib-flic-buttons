@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Benjamin Hardill
+ * Copyright 2015-2016 Benjamin Hardill
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ module.exports = function(RED) {
 		this.host = n.host;
 		this.port = n.port;
 		this.topic = n.topic;
-		this.flic = new Flic(host, port);
+		this.flic = new Flic(this.host, this.port);
 
 		var node = this;
 

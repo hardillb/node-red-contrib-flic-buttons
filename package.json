@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-flic-buttons",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Node-RED node to inject events from flic buttons",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,7 +22,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "node-flic-buttons": "~0.0.4"
+    "node-flic-buttons": "~0.0.5"
   },
   "repository" :
   {
