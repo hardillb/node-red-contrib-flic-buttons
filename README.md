@@ -49,7 +49,7 @@ The node emits a `msg.payload` that looks like this
 }
 ```
 
-
+msg.topic is set to `flic/` with the deviceId of the button appended to the end 
 
 [1]: https://flic.io/?r=985093
 [2]: https://www.npmjs.com/package/node-flic-buttons
