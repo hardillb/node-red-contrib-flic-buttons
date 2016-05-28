@@ -1,56 +1,65 @@
-##node-red-contrib-flic-buttons
+# node-red-contrib-flic-buttons
 
 A Node-RED node to interact with the [flic.io][1] BLE buttons.
 
-Based on the [node-flic-buttons][2] npm. This node requires the 
-[fliclib-linux-dist][3] daemon to handle the low level comunication 
-with the buttons. You will need to install this (and the correct 
-version of bluez) before you start.
+## Installing Flic Daemon
+This node requires the [fliclib-linux-hci][2] daemon to handle the low level comunication with the buttons. You will need to install this before you start:
 
-Buttons need to be paired before you can use this node at the moment. 
-The best way to do this at the moment is to use the `flic` command 
-that ships with the `fliclib-linux` package. The steps are as follows:
+```
+git clone https://github.com/50ButtonsEach/fliclib-linux-hci.git
+```
 
- - Ensure that `bluetoothd` and the `daemon` are running
- - run `flic`
- - type the command `startScan`
- - press the flic button (you may have to press and hold for 7 seconds 
- to unlock if it has been previously paired)
- - type the command `stopScan`
- - type the command `list`, this will show all known flic.io buttons
-```
-80:E4:DA:70:XX:XX [Disconnected]
-```
- - type `connect [80:E4:DA:70:XX:XX]` where [mac address is the button you want
- to pair]
- - you should now see something that looks like 
-```
-Connected to: 80:E4:DA:70:XX:XX
-Verified: 80:E4:DA:70:XX:XX
-```
- - the button should now be paired
+you can either start the daemon manually:
 
-The node takes 2 config parameters
+```
+cd bin/armv61/
+sudo ./flicd -f flic.sqlite3
+```
+or you can edit /etc/rc.local to start the daemon on boot:
+
+```
+sudo nano /etc/rc.local
+```
+Add the following line just before the exit 0:
+```
+sleep 10 &&  /home/pi/git/fliclib-linux-hci/bin/armv6l/./flicd -d -l /var/log/flic.log  -f /home/pi/git/fliclib-linux-hci/bin/armv6l/flic.sqlite3 &
+
+```
+(obviously change the paths to match where you have installed)
+## Pairing Buttons
+
+Buttons need to be paired before you can use this node at the moment. We do this using the scanwizard.js located in the lib folder.
+
+ - Ensure that the `daemon` are running
+ - Ensure that any phones or other devices that your flic buttons were previously paired with are switched off or have bluetooth disabled
+ - navigate to `node-red-contrib-flic-buttons/lib`
+ - type the command `node scanwizard.js`
+ - press your flic button
+ - If it has previously been paired to another device you will have to hold the flic button down for 7 seconds to put it into public mode
+ - once paired take a note of the bluetooth address
+ - repeat this for all your flic button noting down the address for each button
+
+## Adding Buttons to Node-Red
+
+Each flic node requires you specify a button and a click type. The button is configured with a configuration node that can be shared amounst multiple flic nodes. For example one `Living Room` button might be configured but one node will use the `SingleClick` event and another will use the `Hold` event.
+
+The button config node takes the following parameters:
 
  - Host - this is the host running the flic.io daemon process, defaults to localhost
- - Port - the port for the daemon process, defaults to 5000
-
-You shouldn't need to change these defaults unless you are doing something strange
+ - Port - the port for the daemon process, defaults to 5551
+ - Button Address - the bluetooth address that you noted down when pairing your buttons
 
 The node emits a `msg.payload` that looks like this
 ```
 {
   "deviceId":"80:E4:DA:70:XX:XX",
-  "queued":false,
+  "queued":true,
   "timeDiff":0,
-  "isSingleClick":true,
-  "isDoubleClick":false,
-  "isHold":false
+  "clickType":"ButtonDown"
 }
 ```
 
-msg.topic is set to `flic/` with the deviceId of the button appended to the end 
+ClickType can be: `ButtonDown`,`ButtonUp`,`ButtonClick`,`ButtonSingleClick`,`ButtonDoubleClick`,`ButtonHold`.
 
 [1]: https://flic.io/?r=985093
-[2]: https://www.npmjs.com/package/node-flic-buttons
-[3]: https://github.com/50ButtonsEach/fliclib-linux-dist
+[2]: https://github.com/50ButtonsEach/fliclib-linux-hci
