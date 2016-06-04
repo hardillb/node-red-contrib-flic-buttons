@@ -26,7 +26,7 @@ module.exports = function(RED) {
 		this.port = n.port;
 		this.topic = n.topic;
 
-		console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port );
+		//console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port );
 
 		var client = new FlicClient(this.host, 5551);
 
@@ -34,19 +34,53 @@ module.exports = function(RED) {
 
 		node.status({fill:"green",shape:"ring",text:"Connecting..."});
 
+		function handleClick(bdAddr, clickType, wasQueued, timeDiff) {
+			//console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
+
+				var msg = {
+					topic: node.topic||'flic' + '/' + bdAddr,
+					payload: {
+						"deviceId":bdAddr,
+						"queued":wasQueued,
+						"timeDiff":timeDiff,
+						"clickType":clickType
+					}
+				}
+				node.send(msg);
+		}
+
 		function listenToButton(bdAddr) {
+
 			var cc = new FlicConnectionChannel(bdAddr);
 			client.addConnectionChannel(cc);
+
+			//console.log("connecting to: " + bdAddr );
+
+			cc.on("buttonSingleOrDoubleClickOrHold", function(clickType, wasQueued, timeDiff) {
+				handleClick( bdAddr, clickType, wasQueued, timeDiff );
+			});
+
 			cc.on("buttonUpOrDown", function(clickType, wasQueued, timeDiff) {
-				console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
+				handleClick( bdAddr, clickType, wasQueued, timeDiff );
 			});
+
+			/**
+			cc.on("createResponse", function(error, connectionStatus) {
+				console.log( "createResponse for " + bdAddr + ": " + error + " : " + connectionStatus );
+			});
+
+			cc.on("removed", function(removedReason) {
+				console.log( "removed for " + bdAddr + ": " + removedReason );
+			});
+
 			cc.on("connectionStatusChanged", function(connectionStatus, disconnectReason) {
-				console.log(bdAddr + " " + connectionStatus + (connectionStatus == "Disconnected" ? " " + disconnectReason : ""));
+				console.log( "connectionStatusChanged for " + bdAddr + ": " + connectionStatus + " : " + disconnectReason );
 			});
+			**/
 		}
 
 		client.once("ready", function() {
-			console.log("Connected to Flic daemon!");
+			//console.log("Connected to Flic daemon!");
 
 			node.status({fill:"green",shape:"dot",text:"connected"});
 
@@ -57,53 +91,34 @@ module.exports = function(RED) {
 			});
 		});
 
+		/**
 		client.on("bluetoothControllerStateChange", function(state) {
 			console.log("Bluetooth controller state change: " + state);
 		});
+		**/
 
 		client.on("newVerifiedButton", function(bdAddr) {
-			console.log("A new button was added: " + bdAddr);
+			//console.log("A new button was added: " + bdAddr);
 			listenToButton(bdAddr);
 		});
 
 		client.on("error", function(error) {
 
-			console.log("Connection Error: " + error);
+			//console.log("Connection Error: " + error);
 
 			node.status({fill:"red",shape:"dot",text:"Connection Error"});
 		});
 
 		client.on("close", function(hadError) {
-			console.log("Connection closed: " + hadError);
+			//console.log("Connection closed: " + hadError);
 
 			node.status({fill:"red",shape:"dot",text:"Connection Closed"});
 		});
 
-/**
-		function onClick(evt){
-			var msg = {
-				topic: this.topic||'flic' + '/' + evt.deviceId,
-				payload: evt
-			}
-			node.send(msg);
-		}
-
-		this.flic.on('online', function(){
-			node.status({fill:"green",shape:"dot",text:"connected"});
+		this.on('close', function() {
+			client.close();
 		});
-
-		this.flic.on('offline', function(){
-			node.status({fill:"red",shape:"dot",text:"disconnected"});
-		});
-
-		this.flic.on('click', onClick);
-
-		this.on('close',function(){
-			node.flic.removeListener('click', onClick);
-			node.flic.close();
-		});
-
-		**/
+		
 	}
 	RED.nodes.registerType('flic', flic);
 };
