@@ -14,7 +14,10 @@
  * limitations under the License.
  **/
  "use strict";
-var Flic = require('node-flic-buttons');
+var fliclib = require("./lib/fliclibNodeJs");
+var FlicClient = fliclib.FlicClient;
+var FlicConnectionChannel = fliclib.FlicConnectionChannel;
+var FlicScanner = fliclib.FlicScanner;
 
 module.exports = function(RED) {
 	function flic(n) {
@@ -22,12 +25,61 @@ module.exports = function(RED) {
 		this.host = n.host;
 		this.port = n.port;
 		this.topic = n.topic;
-		this.flic = new Flic(this.host, this.port);
+
+		console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port );
+
+		var client = new FlicClient(this.host, 5551);
 
 		var node = this;
 
-		node.status({fill:"green",shape:"dot",text:"connected"});
+		node.status({fill:"green",shape:"ring",text:"Connecting..."});
 
+		function listenToButton(bdAddr) {
+			var cc = new FlicConnectionChannel(bdAddr);
+			client.addConnectionChannel(cc);
+			cc.on("buttonUpOrDown", function(clickType, wasQueued, timeDiff) {
+				console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
+			});
+			cc.on("connectionStatusChanged", function(connectionStatus, disconnectReason) {
+				console.log(bdAddr + " " + connectionStatus + (connectionStatus == "Disconnected" ? " " + disconnectReason : ""));
+			});
+		}
+
+		client.once("ready", function() {
+			console.log("Connected to Flic daemon!");
+
+			node.status({fill:"green",shape:"dot",text:"connected"});
+
+			client.getInfo(function(info) {
+				info.bdAddrOfVerifiedButtons.forEach(function(bdAddr) {
+					listenToButton(bdAddr);
+				});
+			});
+		});
+
+		client.on("bluetoothControllerStateChange", function(state) {
+			console.log("Bluetooth controller state change: " + state);
+		});
+
+		client.on("newVerifiedButton", function(bdAddr) {
+			console.log("A new button was added: " + bdAddr);
+			listenToButton(bdAddr);
+		});
+
+		client.on("error", function(error) {
+
+			console.log("Connection Error: " + error);
+
+			node.status({fill:"red",shape:"dot",text:"Connection Error"});
+		});
+
+		client.on("close", function(hadError) {
+			console.log("Connection closed: " + hadError);
+
+			node.status({fill:"red",shape:"dot",text:"Connection Closed"});
+		});
+
+/**
 		function onClick(evt){
 			var msg = {
 				topic: this.topic||'flic' + '/' + evt.deviceId,
@@ -50,6 +102,8 @@ module.exports = function(RED) {
 			node.flic.removeListener('click', onClick);
 			node.flic.close();
 		});
+
+		**/
 	}
 	RED.nodes.registerType('flic', flic);
 };
