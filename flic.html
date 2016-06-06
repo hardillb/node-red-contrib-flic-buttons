@@ -27,8 +27,18 @@
         <input type="text" id="node-input-port" placeholder="Port">
     </div>
     <br/>
-    <!-- By convention, most nodes have a 'name' property. The following div -->
-    <!-- provides the necessary field. Should always be the last option      -->
+    <div class="form-row">
+        <label for="node-input-event"><i class="fa fa-tasks"></i> Event</label>
+		<select id="node-input-event" style='width:70%'>
+            <option value="any">Any</option>
+            <option value="ButtonDown">Button Down</option>
+            <option value="ButtonUp">Button Up</option>
+            <option value="ButtonSingleClick">Button Single Click</option>
+            <option value="ButtonDoubleClick">Button Double Click</option>
+            <option value="ButtonHold">Button Hold</option>
+        </select>
+    </div>
+    <br/>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -44,6 +54,7 @@ RED.nodes.registerType('flic',{
 	category: 'input',
 	defaults: {
 		'name': {value: ""},
+		'event': {value:"any", required:true},
 		'host': {value:"127.0.0.1", required: true},
 		'port': {value: 5551, required: true},
 		'topic': {value:"flic", required:true}

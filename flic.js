@@ -26,7 +26,9 @@ module.exports = function(RED) {
 		this.port = n.port;
 		this.topic = n.topic;
 
-		//console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port );
+		this.event = n.event;
+
+		//console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port);
 
 		var client = new FlicClient(this.host, 5551);
 
@@ -37,16 +39,21 @@ module.exports = function(RED) {
 		function handleClick(bdAddr, clickType, wasQueued, timeDiff) {
 			//console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
 
-				var msg = {
-					topic: node.topic||'flic' + '/' + bdAddr,
-					payload: {
-						"deviceId":bdAddr,
-						"queued":wasQueued,
-						"timeDiff":timeDiff,
-						"clickType":clickType
-					}
+			if( clickType !== node.event && node.event !== "any" ){
+				//console.log( "Discarding clicktype: " + clickType );
+				return;
+			}
+
+			var msg = {
+				topic: node.topic||'flic' + '/' + bdAddr,
+				payload: {
+					"deviceId":bdAddr,
+					"queued":wasQueued,
+					"timeDiff":timeDiff,
+					"clickType":clickType
 				}
-				node.send(msg);
+			}
+			node.send(msg);
 		}
 
 		function listenToButton(bdAddr) {
@@ -118,7 +125,7 @@ module.exports = function(RED) {
 		this.on('close', function() {
 			client.close();
 		});
-		
+
 	}
 	RED.nodes.registerType('flic', flic);
 };
