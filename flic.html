@@ -12,21 +12,11 @@
 -->
 <script type="text/x-red" data-template-name="flic">
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" placeholder="Topic">
+        <label for="node-input-button"><i class="icon-bookmark"></i> Button</label>
+        <input type="text" id="node-input-button" >
     </div>
+    <br/>
 
-    <br/>
-    <div class="form-row">
-        <label for="node-input-host"><i class="fa fa-tasks"></i> Host</label>
-        <input type="text" id="node-input-host" placeholder="Host">
-    </div>
-    <br/>
-    <div class="form-row">
-        <label for="node-input-port"><i class="fa fa-tasks"></i> Port</label>
-        <input type="text" id="node-input-port" placeholder="Port">
-    </div>
-    <br/>
     <div class="form-row">
         <label for="node-input-event"><i class="fa fa-tasks"></i> Event</label>
 		<select id="node-input-event" style='width:70%'>
@@ -39,6 +29,13 @@
         </select>
     </div>
     <br/>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <br/>
+
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -54,9 +51,8 @@ RED.nodes.registerType('flic',{
 	category: 'input',
 	defaults: {
 		'name': {value: ""},
+		'button': {value: "", type: "Flic Button"},
 		'event': {value:"any", required:true},
-		'host': {value:"127.0.0.1", required: true},
-		'port': {value: 5551, required: true},
 		'topic': {value:"flic", required:true}
 	},
 	color: '#4BADAC',

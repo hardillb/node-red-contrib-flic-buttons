@@ -22,15 +22,20 @@ var FlicScanner = fliclib.FlicScanner;
 module.exports = function(RED) {
 	function flic(n) {
 		RED.nodes.createNode(this,n);
-		this.host = n.host;
-		this.port = n.port;
-		this.topic = n.topic;
 
+		this.topic = n.topic;
 		this.event = n.event;
 
-		//console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port);
+		this.button = RED.nodes.getNode(n.button);
 
-		var client = new FlicClient(this.host, 5551);
+		this.address = this.button.address;
+
+		console.log( "Flic node address: " + this.address );
+
+		console.log( "Flic node button client: " + this.button.client );
+		console.log( "Flic node client: " + this.button.client.client );
+
+		var client = this.button.client.client;
 
 		var node = this;
 
@@ -61,7 +66,7 @@ module.exports = function(RED) {
 			var cc = new FlicConnectionChannel(bdAddr);
 			client.addConnectionChannel(cc);
 
-			//console.log("connecting to: " + bdAddr );
+			console.log("connecting to: " + bdAddr );
 
 			cc.on("buttonSingleOrDoubleClickOrHold", function(clickType, wasQueued, timeDiff) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );
@@ -87,26 +92,11 @@ module.exports = function(RED) {
 		}
 
 		client.once("ready", function() {
-			//console.log("Connected to Flic daemon!");
+			console.log("Connected to Flic daemon!");
 
 			node.status({fill:"green",shape:"dot",text:"connected"});
 
-			client.getInfo(function(info) {
-				info.bdAddrOfVerifiedButtons.forEach(function(bdAddr) {
-					listenToButton(bdAddr);
-				});
-			});
-		});
-
-		/**
-		client.on("bluetoothControllerStateChange", function(state) {
-			console.log("Bluetooth controller state change: " + state);
-		});
-		**/
-
-		client.on("newVerifiedButton", function(bdAddr) {
-			//console.log("A new button was added: " + bdAddr);
-			listenToButton(bdAddr);
+			listenToButton(node.address);
 		});
 
 		client.on("error", function(error) {
@@ -120,10 +110,6 @@ module.exports = function(RED) {
 			//console.log("Connection closed: " + hadError);
 
 			node.status({fill:"red",shape:"dot",text:"Connection Closed"});
-		});
-
-		this.on('close', function() {
-			client.close();
 		});
 
 	}
