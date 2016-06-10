@@ -39,11 +39,11 @@ module.exports = function(RED) {
 			//console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
 
 			if( clickType !== node.event ){
-				//console.log( "Discarding clicktype: " + clickType );
+				//console.log( "Discarding clicktype: " + clickType + " for topic " + node.topic );
 				return;
 			}
 
-			//console.log("emitting " + clickType + " message for button with type " + node.event );
+			//console.log("emitting " + clickType + " message for topic " + node.topic );
 
 			var msg = {
 				topic: node.topic||'flic' + '/' + bdAddr,
@@ -61,8 +61,6 @@ module.exports = function(RED) {
 
 			var cc = new FlicConnectionChannel(bdAddr);
 			client.addConnectionChannel(cc);
-
-			//console.log("connecting to button: " + bdAddr + " with event type " + node.event );
 
 			var eventName;
 
@@ -83,6 +81,8 @@ module.exports = function(RED) {
 					eventName = "buttonSingleOrDoubleClickOrHold";
 					break;
 			}
+
+			//console.log("connecting to button: " + bdAddr + " with event type " + node.event + ": " + eventName );
 
 			cc.on(eventName, function(clickType, wasQueued, timeDiff) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );

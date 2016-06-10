@@ -26,9 +26,37 @@ module.exports = function(RED) {
 
 		this.address = n.address;
 
-		console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port);
+		var node = this;
 
-		this.client = new FlicClient(this.host, 5551);
+		var clientName = this.host + ":" + this.port;
+		var globalContext = this.context().global;
+
+		if(globalContext.flicClients == null){
+			globalContext.flicClients = {};
+		}
+
+		this.client = globalContext.flicClients[clientName];
+
+		//console.log( "client (" + clientName + ") from lookup: " + this.client );
+
+		if( this.client == null )
+		{
+			console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port);
+			this.client = new FlicClient(this.host, 5551);
+
+			globalContext.flicClients[clientName] = this.client;
+		}
+
+		this.on('close', function() {
+			if(globalContext.flicClients[clientName]){
+
+				//console.log( "closing client" );
+
+				globalContext.flicClients[clientName].close();
+
+				globalContext.flicClients[clientName] = undefined;
+			}
+		});
 
 	}
 	RED.nodes.registerType('Flic Button', flicButton);
