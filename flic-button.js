@@ -18,6 +18,9 @@ var fliclib = require("./lib/fliclibNodeJs");
 var FlicClient = fliclib.FlicClient;
 
 module.exports = function(RED) {
+
+	var globalContext;
+
 	function flicButton(n) {
 		RED.nodes.createNode(this,n);
 
@@ -29,7 +32,7 @@ module.exports = function(RED) {
 		var node = this;
 
 		var clientName = this.host + ":" + this.port;
-		var globalContext = this.context().global;
+		globalContext = this.context().global;
 
 		if(globalContext.flicClients == null){
 			globalContext.flicClients = {};
@@ -57,7 +60,23 @@ module.exports = function(RED) {
 				globalContext.flicClients[clientName] = undefined;
 			}
 		});
-
 	}
+
 	RED.nodes.registerType('Flic Button', flicButton);
+
+	RED.httpAdmin.get('/flic/info/:clientName', function(req,res){
+
+		var client = globalContext ? globalContext.flicClients[req.params.clientName] : null;
+
+		if(!client){
+			res.status(500).end();
+			return;
+		}
+
+		client.getInfo( function(info){
+
+			res.json( info );
+
+		} );
+    });
 };

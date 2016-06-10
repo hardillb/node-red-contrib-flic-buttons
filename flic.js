@@ -59,6 +59,11 @@ module.exports = function(RED) {
 
 		function listenToButton(bdAddr) {
 
+			if( !bdAddr ) {
+				//console.log( "not connecting to button as no address supplied: " + bdAddr );
+				return;
+			}
+
 			var cc = new FlicConnectionChannel(bdAddr);
 			client.addConnectionChannel(cc);
 
@@ -88,19 +93,17 @@ module.exports = function(RED) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );
 			});
 
-			/**
 			cc.on("createResponse", function(error, connectionStatus) {
-				console.log( "createResponse for " + bdAddr + ": " + error + " : " + connectionStatus );
+				//console.log( "createResponse for " + bdAddr + ": " + error + " : " + connectionStatus );
 			});
 
 			cc.on("removed", function(removedReason) {
-				console.log( "removed for " + bdAddr + ": " + removedReason );
+				//console.log( "removed for " + bdAddr + ": " + removedReason );
 			});
 
 			cc.on("connectionStatusChanged", function(connectionStatus, disconnectReason) {
-				console.log( "connectionStatusChanged for " + bdAddr + ": " + connectionStatus + " : " + disconnectReason );
+				//console.log( "connectionStatusChanged for " + bdAddr + ": " + connectionStatus + " : " + disconnectReason );
 			});
-			**/
 		}
 
 		client.once("ready", function() {
