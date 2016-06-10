@@ -14,24 +14,21 @@
  * limitations under the License.
  **/
  "use strict";
+var fliclib = require("./lib/fliclibNodeJs");
+var FlicClient = fliclib.FlicClient;
 
 module.exports = function(RED) {
 	function flicButton(n) {
 		RED.nodes.createNode(this,n);
 
-		this.client = RED.nodes.getNode(n.client);
-
-		console.log( "client in button: " + this.client );
+		this.host = n.host;
+		this.port = n.port;
 
 		this.address = n.address;
 
-		/**
-		client.getInfo(function(info) {
-			info.bdAddrOfVerifiedButtons.forEach(function(bdAddr) {
-				listenToButton(bdAddr);
-			});
-		});
-		**/
+		console.log( "Connecting to Flic Daemon at " + this.host + ":" + this.port);
+
+		this.client = new FlicClient(this.host, 5551);
 
 	}
 	RED.nodes.registerType('Flic Button', flicButton);

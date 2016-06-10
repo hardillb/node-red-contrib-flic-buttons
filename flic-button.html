@@ -12,13 +12,16 @@
 -->
 <script type="text/x-red" data-template-name="Flic Button">
     <div class="form-row">
-        <label for="node-input-client"><i class="icon-bookmark"></i> Client</label>
-        <input type="text" id="node-input-client" >
+        <label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
+        <input type="text" id="node-config-input-host">
     </div>
-    <br/>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
 
     <div class="form-row">
-        <label for="node-config-input-address"><i class="icon-bookmark"></i> Address</label>
+        <label for="node-config-input-address"><i class="icon-bookmark"></i>Button Address</label>
         <input type="text" id="node-config-input-address">
     </div>
     <div class="form-row">
@@ -35,9 +38,10 @@
 RED.nodes.registerType('Flic Button',{
 	category: 'config',
 	defaults: {
-		'client': {value: "", required: true, type: "Flic Client"},
 		'address': { value: "", required: true},
-		'name': {value: ""}
+		'name': {value: ""},
+		host: { value: "127.0.0.1", required: true},
+		port: { value: 5551, required: true}
 	},
 	label: function() {
 		return this.name ? this.name : this.address;

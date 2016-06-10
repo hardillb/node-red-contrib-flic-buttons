@@ -20,9 +20,9 @@
     <div class="form-row">
         <label for="node-input-event"><i class="fa fa-tasks"></i> Event</label>
 		<select id="node-input-event" style='width:70%'>
-            <option value="any">Any</option>
             <option value="ButtonDown">Button Down</option>
             <option value="ButtonUp">Button Up</option>
+            <option value="ButtonClick">Button Click</option>
             <option value="ButtonSingleClick">Button Single Click</option>
             <option value="ButtonDoubleClick">Button Double Click</option>
             <option value="ButtonHold">Button Hold</option>
@@ -52,7 +52,7 @@ RED.nodes.registerType('flic',{
 	defaults: {
 		'name': {value: ""},
 		'button': {value: "", type: "Flic Button"},
-		'event': {value:"any", required:true},
+		'event': {value:"", required:true},
 		'topic': {value:"flic", required:true}
 	},
 	color: '#4BADAC',

@@ -29,13 +29,7 @@ module.exports = function(RED) {
 		this.button = RED.nodes.getNode(n.button);
 
 		this.address = this.button.address;
-
-		console.log( "Flic node address: " + this.address );
-
-		console.log( "Flic node button client: " + this.button.client );
-		console.log( "Flic node client: " + this.button.client.client );
-
-		var client = this.button.client.client;
+		var client = this.button.client;
 
 		var node = this;
 
@@ -44,10 +38,12 @@ module.exports = function(RED) {
 		function handleClick(bdAddr, clickType, wasQueued, timeDiff) {
 			//console.log(bdAddr + " " + clickType + " " + (wasQueued ? "wasQueued" : "notQueued") + " " + timeDiff + " seconds ago");
 
-			if( clickType !== node.event && node.event !== "any" ){
+			if( clickType !== node.event ){
 				//console.log( "Discarding clicktype: " + clickType );
 				return;
 			}
+
+			//console.log("emitting " + clickType + " message for button with type " + node.event );
 
 			var msg = {
 				topic: node.topic||'flic' + '/' + bdAddr,
@@ -66,13 +62,29 @@ module.exports = function(RED) {
 			var cc = new FlicConnectionChannel(bdAddr);
 			client.addConnectionChannel(cc);
 
-			console.log("connecting to: " + bdAddr );
+			//console.log("connecting to button: " + bdAddr + " with event type " + node.event );
 
-			cc.on("buttonSingleOrDoubleClickOrHold", function(clickType, wasQueued, timeDiff) {
-				handleClick( bdAddr, clickType, wasQueued, timeDiff );
-			});
+			var eventName;
 
-			cc.on("buttonUpOrDown", function(clickType, wasQueued, timeDiff) {
+			switch(node.event){
+
+				case "ButtonDown":
+				case "ButtonUp":
+					eventName = "buttonUpOrDown";
+					break;
+
+				case "ButtonClick":
+					eventName = "buttonClickOrHold";
+					break;
+
+				case "ButtonSingleClick":
+				case "ButtonDoubleClick":
+				case "ButtonHold":
+					eventName = "buttonSingleOrDoubleClickOrHold";
+					break;
+			}
+
+			cc.on(eventName, function(clickType, wasQueued, timeDiff) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );
 			});
 
@@ -92,7 +104,7 @@ module.exports = function(RED) {
 		}
 
 		client.once("ready", function() {
-			console.log("Connected to Flic daemon!");
+			//console.log("Connected to Flic daemon!");
 
 			node.status({fill:"green",shape:"dot",text:"connected"});
 

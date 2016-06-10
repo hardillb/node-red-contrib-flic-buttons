@@ -10,7 +10,6 @@
   "node-red": {
     "nodes": {
       "flic": "flic.js",
-	  "flic-config": "flic-client.js",
 	  "flic-button": "flic-button.js"
     }
   },

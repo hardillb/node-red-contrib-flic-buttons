@@ -35,7 +35,7 @@ RED.nodes.registerType('Flic Client',{
 	defaults: {
 		'name': {value: ""},
 		host: { value: "127.0.0.1", required: true},
-		port: { value: 5551, required: true},
+		port: { value: 5551, required: true}
 	},
 	label: function() {
 		return this.name ? this.name : this.host+":"+this.port;
