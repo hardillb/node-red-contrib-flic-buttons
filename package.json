@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-flic-buttons",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Node-RED node to inject events from flic buttons",
   "keywords": [
     "flic.io",
