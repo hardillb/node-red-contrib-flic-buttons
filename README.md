@@ -49,8 +49,6 @@ The button config node takes the following parameters:
  - Port - the port for the daemon process, defaults to 5551
  - Button Address - the bluetooth address that you noted down when pairing your buttons
 
-You shouldn't need to change these defaults unless you are doing something strange
-
 The node emits a `msg.payload` that looks like this
 ```
 {
