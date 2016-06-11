@@ -25,6 +25,7 @@ Add the following line just before the exit 0:
 sleep 10 &&  /home/pi/git/fliclib-linux-hci/bin/armv6l/./flicd -d -l /var/log/flic.log  -f /home/pi/git/fliclib-linux-hci/bin/armv6l/flic.sqlite3 &
 
 ```
+(obviously change the paths to match where you have installed)
 ## Pairing Buttons
 
 Buttons need to be paired before you can use this node at the moment. We do this using the scanwizard.js located in the lib folder.
