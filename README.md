@@ -13,7 +13,7 @@ you can either start the daemon manually:
 
 ```
 cd bin/armv61/
-./flicd -f flic.sqlite3
+sudo ./flicd -f flic.sqlite3
 ```
 or you can edit /etc/rc.local to start the daemon on boot:
 
