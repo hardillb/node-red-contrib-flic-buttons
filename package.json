@@ -18,6 +18,13 @@
      "name" : "Benjamin Hardill",
      "url"  : "http://www.hardill.me.uk/wordpress/"
   },
+  "contributors": [
+  	{
+  		"email":"giles@roadnight.name",
+  		"name":"Giles Roadnight",
+  		"url":"http://giles.roadnight.name"
+  	}
+  ],
   "license": "Apache-2.0",
   "dependencies": {
   },
