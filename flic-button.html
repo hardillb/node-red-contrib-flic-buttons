@@ -21,8 +21,8 @@
     </div>
 
     <div class="form-row">
-        <label for="node-config-input-address"><i class="icon-bookmark"></i>Address</label>
-        <select id="node-config-input-address" disabled></select>
+        <label for="node-config-input-address"><i class="icon-bookmark"></i>Button Address</label>
+        <input type="text" id="node-config-input-address">
     </div>
     <div class="form-row">
         <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
@@ -35,71 +35,16 @@
 </script>
 
 <script type="text/javascript">
-
-function getClientName(){
-
-	var host = $('#node-config-input-host')[0];
-	var port = $('#node-config-input-port')[0];
-
-	return  host.value + ":" + port.value;
-}
-
-function loadFlicConfig(){
-
-	var address = $('#node-config-input-address')[0];
-
-	address.disabled = true;
-
-	while(address.length > 0){
-		address.remove(0);
-	}
-
-	var clientName = getClientName();
-
-	console.log( "loading data for " + clientName );
-
-	$.getJSON("/admin/flic/info/" + clientName, function(data){
-
-		var clientNameAfterResponse = getClientName();
-
-		if(clientNameAfterResponse === clientName){
-			console.log( "data loaded for " + clientName );
-
-			address.disabled = false;
-
-			for (buttonAddress in data.bdAddrOfVerifiedButtons) {
-				$('<option/>',{
-					value: data.bdAddrOfVerifiedButtons[buttonAddress],
-					text: data.bdAddrOfVerifiedButtons[buttonAddress]
-				}).appendTo('#node-config-input-address');
-			}
-		}
-
-	});
-}
-
 RED.nodes.registerType('Flic Button',{
 	category: 'config',
 	defaults: {
-		address: {value: ""},
-		name: {value: ""},
+		'address': { value: "", required: true},
+		'name': {value: ""},
 		host: { value: "127.0.0.1", required: true},
 		port: { value: 5551, required: true}
 	},
 	label: function() {
-		return this.name ? this.name + " (" + this.address + ")" : this.address;
-	},
-	oneditprepare: function(){
-
-		loadFlicConfig();
-
-		$('#node-config-input-host').on("input", function(){
-			loadFlicConfig();
-		});
-
-		$('#node-config-input-port').on("input", function(){
-			loadFlicConfig();
-		});
+		return this.name ? this.name : this.address;
 	}
 });
 </script>
