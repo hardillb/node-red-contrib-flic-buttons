@@ -31,6 +31,10 @@ module.exports = function(RED) {
 		var clientName = this.host + ":" + this.port;
 		var globalContext = this.context().global;
 
+		if(globalContext == null){
+			globalContext = global;
+		}
+
 		if(globalContext.flicClients == null){
 			globalContext.flicClients = {};
 		}
