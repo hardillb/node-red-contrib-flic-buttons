@@ -12,7 +12,7 @@ git clone https://github.com/50ButtonsEach/fliclib-linux-hci.git
 you can either start the daemon manually:
 
 ```
-cd bin/armv61/
+cd bin/armv6l/
 sudo ./flicd -f flic.sqlite3
 ```
 or you can edit /etc/rc.local to start the daemon on boot:
