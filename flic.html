@@ -40,6 +40,11 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+
+    <div class="form-row">
+        <label for="node-input-batterystatus"><i class="fa fa-tag"></i> Check batterystatus</label>
+        <input type="checkbox" id="node-input-batterystatus" >
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="flic">
@@ -53,7 +58,8 @@ RED.nodes.registerType('flic',{
 		'name': {value: ""},
 		'button': {value: "", type: "Flic Button"},
 		'event': {value:"", required:true},
-		'topic': {value:"flic", required:true}
+		'topic': {value:"flic", required:true},
+    'batterystatus': {value:false}
 	},
 	color: '#4BADAC',
 	inputs: 0,
