@@ -29,6 +29,7 @@ module.exports = function(RED) {
 		this.button = RED.nodes.getNode(n.button);
 
 		this.address = this.button.address;
+    this.autodisconnecttime = ("autodisconnecttime" in this.button) ? this.button.autoDisconnectTime : 15;
 		var client = this.button.client;
 
 		var node = this;
@@ -59,7 +60,11 @@ module.exports = function(RED) {
 
 		function listenToButton(bdAddr) {
 
-			var cc = new FlicConnectionChannel(bdAddr);
+      var options = {
+          autoDisconnectTime: node.autodisconnecttime
+        };
+
+			var cc = new FlicConnectionChannel(bdAddr, options);
 			client.addConnectionChannel(cc);
 
 			var eventName;
