@@ -26,7 +26,7 @@ module.exports = function(RED) {
 
 		this.address = n.address;
 
-    this.autodisconnecttime = n.autodisconnecttime;
+		this.autodisconnecttime = n.autodisconnecttime;
 
 		var node = this;
 

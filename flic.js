@@ -30,9 +30,9 @@ module.exports = function(RED) {
 		this.button = RED.nodes.getNode(n.button);
 
 		this.address = this.button.address;
-    this.autodisconnecttime = ("autodisconnecttime" in this.button) ? this.button.autoDisconnectTime : 15;
+		this.autodisconnecttime = ("autodisconnecttime" in this.button) ? this.button.autoDisconnectTime : 15;
 
-    this.checkbatterystatus = n.batterystatus;
+		this.checkbatterystatus = n.batterystatus;
 
 		var client = this.button.client;
 
@@ -62,9 +62,9 @@ module.exports = function(RED) {
 			node.send(msg);
 		}
 
-    function handleBatteryStatus( bdAddr, batteryPercentage, timestamp ) {
-      console.log( "BatteryStatus: " + batteryPercentage + "% for addr: " + bdAddr );
-      var msg = {
+		function handleBatteryStatus( bdAddr, batteryPercentage, timestamp ) {
+			console.log( "BatteryStatus: " + batteryPercentage + "% for addr: " + bdAddr );
+			var msg = {
 				topic: node.topic||'flic' + '/' + bdAddr + '/batteryPercentage',
 				payload: {
 					"deviceId":bdAddr,
@@ -73,7 +73,7 @@ module.exports = function(RED) {
 				}
 			}
 			node.send(msg);
-    }
+		}
 
 		function listenToButton(bdAddr) {
 
@@ -110,15 +110,15 @@ module.exports = function(RED) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );
 			});
 
-      if (node.checkbatterystatus == true)
-      {
-        var bsl = new FlicBatteryStatusListener(bdAddr);
-  			client.addBatteryStatusListener(bsl);
+			if (node.checkbatterystatus == true)
+			{
+				var bsl = new FlicBatteryStatusListener(bdAddr);
+				client.addBatteryStatusListener(bsl);
 
-        bsl.on("batteryStatus", function(batteryPercentage, timestamp) {
-          handleBatteryStatus( bdAddr, batteryPercentage, timestamp );
-        });
-      }
+				bsl.on("batteryStatus", function(batteryPercentage, timestamp) {
+					handleBatteryStatus( bdAddr, batteryPercentage, timestamp );
+				});
+			}
 
 
 			/**
