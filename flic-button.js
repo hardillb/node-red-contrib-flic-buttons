@@ -26,6 +26,8 @@ module.exports = function(RED) {
 
 		this.address = n.address;
 
+		this.autodisconnecttime = n.autodisconnecttime;
+
 		var node = this;
 
 		var clientName = this.host + ":" + this.port;

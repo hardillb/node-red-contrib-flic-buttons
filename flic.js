@@ -17,6 +17,7 @@
 var fliclib = require("./lib/fliclibNodeJs");
 var FlicClient = fliclib.FlicClient;
 var FlicConnectionChannel = fliclib.FlicConnectionChannel;
+var FlicBatteryStatusListener = fliclib.FlicBatteryStatusListener;
 var FlicScanner = fliclib.FlicScanner;
 
 module.exports = function(RED) {
@@ -29,6 +30,10 @@ module.exports = function(RED) {
 		this.button = RED.nodes.getNode(n.button);
 
 		this.address = this.button.address;
+		this.autodisconnecttime = ("autodisconnecttime" in this.button) ? this.button.autoDisconnectTime : 15;
+
+		this.checkbatterystatus = n.batterystatus;
+
 		var client = this.button.client;
 
 		var node = this;
@@ -57,9 +62,26 @@ module.exports = function(RED) {
 			node.send(msg);
 		}
 
+		function handleBatteryStatus( bdAddr, batteryPercentage, timestamp ) {
+			console.log( "BatteryStatus: " + batteryPercentage + "% for addr: " + bdAddr );
+			var msg = {
+				topic: node.topic||'flic' + '/' + bdAddr + '/batteryPercentage',
+				payload: {
+					"deviceId":bdAddr,
+					"batteryPercentage":batteryPercentage,
+					"timeStamp":timestamp
+				}
+			}
+			node.send(msg);
+		}
+
 		function listenToButton(bdAddr) {
 
-			var cc = new FlicConnectionChannel(bdAddr);
+      var options = {
+          autoDisconnectTime: node.autodisconnecttime
+        };
+
+			var cc = new FlicConnectionChannel(bdAddr, options);
 			client.addConnectionChannel(cc);
 
 			var eventName;
@@ -87,6 +109,17 @@ module.exports = function(RED) {
 			cc.on(eventName, function(clickType, wasQueued, timeDiff) {
 				handleClick( bdAddr, clickType, wasQueued, timeDiff );
 			});
+
+			if (node.checkbatterystatus == true)
+			{
+				var bsl = new FlicBatteryStatusListener(bdAddr);
+				client.addBatteryStatusListener(bsl);
+
+				bsl.on("batteryStatus", function(batteryPercentage, timestamp) {
+					handleBatteryStatus( bdAddr, batteryPercentage, timestamp );
+				});
+			}
+
 
 			/**
 			cc.on("createResponse", function(error, connectionStatus) {
